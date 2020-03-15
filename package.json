@@ -1,0 +1,16 @@
+{
+  "name": "logs_graph",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sangeeta",
+  "license": "ISC",
+  "dependencies": {
+    "alb-log-parser": "0.0.3",
+    "parse-logs": "0.0.22",
+    "percentile": "^1.2.3"
+  }
+}
