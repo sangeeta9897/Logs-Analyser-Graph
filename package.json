@@ -11,8 +11,8 @@
   "dependencies": {
     "alb-log-parser": "0.0.3",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
-    "parse-logs": "0.0.22",
-    "percentile": "^1.2.3"
+    "parse-logs": "0.0.22"
   }
 }
