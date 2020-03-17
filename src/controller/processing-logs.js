@@ -1,5 +1,4 @@
-
-function percentile(percentile, list, fn) {
+const percentile = (percentile, list, fn) => {
     if (isNaN(Number(percentile))) {
         throw new Error(nanError(percentile));
     }
@@ -31,7 +30,6 @@ const processLogs = (data) => {
         const arrAvg = arr => arr.reduce((a, b) => a + b, 0) / arr.length
         var value = data[key]['latency'];
         delete data[key]['latency'];
-        //data[key]['latency'] = value.length;
         data[key]["p90"] = percentile(90, value);
         data[key]["p99"] = percentile(99, value);
         data[key]["p99.9"] = percentile(99.9, value);
