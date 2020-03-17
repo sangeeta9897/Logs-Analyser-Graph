@@ -10,12 +10,18 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/getLogsData', (req, res) => {
-    const allData = AccessLog.accessLogsData();
-    const processedData = ProcessedLog.processLogs(allData.latency);
-    var finalData = {};
-    finalData.latency = processedData;
-    finalData.targetGroup = allData.targetgroup;
-    res.send(finalData).status(200);
+    try {
+        AccessLog.accessLogsData().then((response) => {
+            const processedData = ProcessedLog.processLogs(response[1]);
+            let finalData = {};
+            finalData.latency = processedData;
+            finalData.targetGroup = response[0];
+            res.json(finalData);
+        });
+    }
+    catch (err) {
+        res.status(500).json({ "message": err, "status": "error" });
+    }
 });
 
 app.listen(3000);

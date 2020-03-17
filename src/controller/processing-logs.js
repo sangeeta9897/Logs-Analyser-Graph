@@ -21,14 +21,14 @@ const percentile = (percentile, list, fn) => {
         return 0;
     });
     if (percentile === 0) return list[0];
-    var kIndex = Math.ceil(list.length * (percentile / 100)) - 1;
+    let kIndex = Math.ceil(list.length * (percentile / 100)) - 1;
     return list[kIndex];
 }
 
 const processLogs = (data) => {
     Object.keys(data).forEach((key) => {
         const arrAvg = arr => arr.reduce((a, b) => a + b, 0) / arr.length
-        var value = data[key]['latency'];
+        let value = data[key]['latency'];
         delete data[key]['latency'];
         data[key]["p90"] = percentile(90, value);
         data[key]["p99"] = percentile(99, value);
@@ -36,7 +36,6 @@ const processLogs = (data) => {
         data[key]["p99.99"] = percentile(99.99, value);
         data[key]["avg"] = arrAvg(value);
     });
-
     return data;
 }
 

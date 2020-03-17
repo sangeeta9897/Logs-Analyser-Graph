@@ -1,63 +1,87 @@
 const fs = require('fs');
 
-var targetgroup = {};
-var arr = {};
+const targetgroupData = async () => {
+    let targetgroup = {};
+    try {
+        const files = fs.readdirSync('logs/');
+        files.forEach((file) => {
+            const data = fs.readFileSync("logs/" + file, 'utf8');
+            let logs = data.split('\n');
+            logs.forEach((log) => {
+                if (log.search("hindi.pratilipi") !== -1) {
+                    const logData = log.split(" ");
+                    let trgtGrp;
+                    if (log.search("targetgroup/") !== -1) {
+                        trgtGrp = log.split("targetgroup/");
+                        trgtGrp = trgtGrp[trgtGrp.length - 1].split("/")[0];
+                        if (!targetgroup[trgtGrp]) {
+                            targetgroup[trgtGrp] = {};
+                        }
+                        if (logData[logData.length - 1].startsWith("\"2")) {
+                            if (targetgroup[trgtGrp]['2xx']) {
+                                targetgroup[trgtGrp]['2xx']++;
+                            } else {
+                                targetgroup[trgtGrp]['2xx'] = 1;
+                            }
+                        } else if (logData[logData.length - 1].startsWith("\"5")) {
+                            if (targetgroup[trgtGrp]['5xx']) {
+                                targetgroup[trgtGrp]['5xx']++;
+                            } else {
+                                targetgroup[trgtGrp]['5xx'] = 1;
+                            }
+                        }
+                    }
+                }
+            })
+        })
+    }
+    catch (err) {
+        console.log(err);
+    }
+    finally {
+        return targetgroup;
+    }
+}
 
-const targetgroupData = (str) => {
-    if (str.search("targetgroup/") !== -1) {
-        let trgtGrp = str.split("targetgroup/");
-        trgtGrp = trgtGrp[trgtGrp.length - 1].split("/")[0];
-        if (!targetgroup[trgtGrp]) {
-            targetgroup[trgtGrp] = {};
-        }
-        if (arr[arr.length - 1].startsWith("\"2")) {
-            if (targetgroup[trgtGrp]['2xx']) {
-                targetgroup[trgtGrp]['2xx']++;
-            } else {
-                targetgroup[trgtGrp]['2xx'] = 1;
-            }
-        } else if (arr[arr.length - 1].startsWith("\"5")) {
-            if (targetgroup[trgtGrp]['5xx']) {
-                targetgroup[trgtGrp]['5xx']++;
-            } else {
-                targetgroup[trgtGrp]['5xx'] = 1;
-            }
-        }
+const latencyData = async () => {
+    let allData = {};
+    try {
+        const files = fs.readdirSync('logs/');
+        files.forEach((file) => {
+            const data = fs.readFileSync("logs/" + file, 'utf8');
+            let logs = data.split('\n');
+            logs.forEach((log) => {
+                if (log.search("hindi.pratilipi") !== -1) {
+                    logData = log.split(" ");
+                    const date = new Date(logData[1]);
+                    if (logData.length > 7 && (date != undefined || date != NaN)) {
+                        let fullDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+                        let latency = parseFloat(logData[5]) + parseFloat(logData[6]) + parseFloat(logData[7]);
+                        if (!allData[fullDate]) {
+                            allData[fullDate] = {};
+                        }
+                        if (allData[fullDate]['latency']) {
+                            allData[fullDate]['latency'].push(latency);
+                        } else {
+                            allData[fullDate]['latency'] = [latency];
+                        }
+                    }
+
+                }
+
+            })
+        })
+    }
+    catch (err) {
+        console.log(err);
+    }
+    finally {
+        return allData;
     }
 }
 
 const accessLogsData = () => {
-    var allData = {};
-    const files = fs.readdirSync('logs/');
-    files.forEach((file) => {
-        const data = fs.readFileSync("logs/" + file, 'utf8');
-        var logs = data.split('\n');
-        logs.forEach((str) => {
-            if (str.search("hindi.pratilipi") !== -1) {
-                arr = str.split(" ");
-                targetgroupData(str);
-                var date = new Date(arr[1]);
-                if (arr.length > 7 && (date != undefined || date != NaN)) {
-                    var fullDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
-                    var latency = parseFloat(arr[5]) + parseFloat(arr[6]) + parseFloat(arr[7]);
-                    if (!allData[fullDate]) {
-                        allData[fullDate] = {};
-                    }
-                    if (allData[fullDate]['latency']) {
-                        allData[fullDate]['latency'].push(latency);
-                    } else {
-                        allData[fullDate]['latency'] = [latency];
-                    }
-                }
-
-            }
-
-        })
-    })
-    var result = {};
-    result.targetgroup = targetgroup;
-    result.latency = allData;
-    return result;
+    return Promise.all([targetgroupData(), latencyData()]);
 }
 
 module.exports = {
