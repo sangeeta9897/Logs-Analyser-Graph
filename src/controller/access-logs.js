@@ -87,7 +87,6 @@ const latencyData = async () => {
         console.log(err);
     }
     finally {
-        //console.log(allData)
         return allData;
     }
 }

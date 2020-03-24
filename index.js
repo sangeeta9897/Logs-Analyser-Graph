@@ -12,12 +12,10 @@ app.use(bodyParser.json());
 app.get('/getLogsData', (req, res) => {
     try {
         AccessLog.accessLogsData().then((response) => {
-            console.log(response);
             const processedData = ProcessedLog.processLogs(response[1]);
             let finalData = {};
             finalData.latency = processedData;
             finalData.targetGroup = response[0];
-            console.log(finalData);
             res.json(finalData);
         });
     }
