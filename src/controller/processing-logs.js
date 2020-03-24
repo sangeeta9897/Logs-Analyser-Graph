@@ -26,15 +26,22 @@ const percentile = (percentile, list, fn) => {
 }
 
 const processLogs = (data) => {
-    Object.keys(data).forEach((key) => {
-        const arrAvg = arr => arr.reduce((a, b) => a + b, 0) / arr.length
-        let value = data[key]['latency'];
-        delete data[key]['latency'];
-        data[key]["p90"] = percentile(90, value);
-        data[key]["p99"] = percentile(99, value);
-        data[key]["p99.9"] = percentile(99.9, value);
-        data[key]["p99.99"] = percentile(99.99, value);
-        data[key]["avg"] = arrAvg(value);
+    Object.keys(data).forEach((dateKey) => {
+        Object.keys(data[dateKey]).forEach((hourKey) => {
+            Object.keys(data[dateKey][hourKey]).forEach((minKey) => {
+                const arrAvg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+                let arr = data[dateKey][hourKey][minKey];
+                data[dateKey][hourKey][minKey] = {};
+                if (arr.length != 0) {
+                    data[dateKey][hourKey][minKey]["p90"] = percentile(90, arr);
+                    data[dateKey][hourKey][minKey]["p99"] = percentile(99, arr);
+                    data[dateKey][hourKey][minKey]["p99.9"] = percentile(99.9, arr);
+                    data[dateKey][hourKey][minKey]["p99.99"] = percentile(99.99, arr);
+                    data[dateKey][hourKey][minKey]["avg"] = arrAvg(arr);
+                }
+            });
+        });
+
     });
     return data;
 }

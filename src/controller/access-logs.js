@@ -59,11 +59,22 @@ const latencyData = async () => {
                         let latency = parseFloat(logData[5]) + parseFloat(logData[6]) + parseFloat(logData[7]);
                         if (!allData[fullDate]) {
                             allData[fullDate] = {};
+                            var hours = 0;
+                            while (hours < 24) {
+                                let inHour = hours;
+                                allData[fullDate][hours++] = {};
+                                var minutes = 1;
+                                while (minutes <= 6) {
+                                    allData[fullDate][inHour][minutes++ * 10] = [];
+                                }
+                            }
                         }
-                        if (allData[fullDate]['latency']) {
-                            allData[fullDate]['latency'].push(latency);
+                        var mins = parseInt(date.getMinutes() / 10) * 10;
+                        var hours = date.getHours();
+                        if (allData[fullDate][hours][mins]) {
+                            allData[fullDate][hours][mins].push(latency);
                         } else {
-                            allData[fullDate]['latency'] = [latency];
+                            allData[fullDate][hours][mins] = [latency];
                         }
                     }
 
@@ -76,6 +87,7 @@ const latencyData = async () => {
         console.log(err);
     }
     finally {
+        //console.log(allData)
         return allData;
     }
 }
