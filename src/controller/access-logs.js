@@ -63,9 +63,9 @@ const latencyData = async () => {
                             while (hours < 24) {
                                 let inHour = hours;
                                 allData[fullDate][hours++] = {};
-                                var minutes = 1;
-                                while (minutes <= 6) {
-                                    allData[fullDate][inHour][minutes++ * 10] = [];
+                                var minutes = 0;
+                                while (minutes < 6) {
+                                    allData[fullDate][inHour][(minutes++ * 10)] = [];
                                 }
                             }
                         }
